@@ -5,13 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 db = SQLAlchemy()
 
 
-class Follower(db.Model):
-    user_from_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
-    user_to_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
-
-    follower: Mapped["User"] = relationship("User", foreign_keys=[user_from_id])
-    followed: Mapped["User"] = relationship("User", foreign_keys=[user_to_id])
-
 class User(db.Model):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -23,6 +16,13 @@ class User(db.Model):
     comment = db.relationship('Comment')
     post = db.relationship('Post')
     follower = db.relationship('Follower')
+    
+class Follower(db.Model):
+    user_from_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
+    user_to_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
+
+    follower: Mapped["User"] = relationship("User", foreign_keys=[user_from_id])
+    followed: Mapped["User"] = relationship("User", foreign_keys=[user_to_id])
 
 class Media(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
