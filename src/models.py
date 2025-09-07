@@ -15,14 +15,17 @@ class User(db.Model):
 
     comment = db.relationship('Comment')
     post = db.relationship('Post')
-    follower = db.relationship('Follower')
+    followers = db.relationship('Follower', foreign_keys='[Follower.user_to_id]', back_populates="followed") 
+    following = db.relationship('Follower', foreign_keys='[Follower.user_from_id]', back_populates="follower")  
+
+    #aqui debo poner la relacion dos veces para que sea muchos a muchos 
     
 class Follower(db.Model):
     user_from_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
     user_to_id: Mapped[int] = mapped_column(ForeignKey('user.id'), primary_key=True)
 
-    follower: Mapped["User"] = relationship("User", foreign_keys=[user_from_id])
-    followed: Mapped["User"] = relationship("User", foreign_keys=[user_to_id])
+    follower: Mapped['User'] = relationship('User', foreign_keys=[user_from_id], back_populates="following")
+    followed: Mapped['User'] = relationship('User', foreign_keys=[user_to_id], back_populates="followers")
 
 class Media(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
